@@ -15,7 +15,7 @@ To get started with Infobip Voice Flutter Plugin, follow these simple steps:
 
     ```yaml
     dependencies:
-      infobip_voice: ^2.0.0
+      infobip_voice: ^0.0.2
     ```
 
 2. **Import:** Import the package in your Dart code.
