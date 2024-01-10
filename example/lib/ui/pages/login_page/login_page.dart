@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:infobip_voice_showcase/core/session.dart';
+import 'package:infobip_voice/infobip_rtc.dart';
+import 'package:infobip_voice/model/errors.dart';
 import 'package:infobip_voice_showcase/ui/pages/main_page/main_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,13 +15,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final TextEditingController _applicationIdController = TextEditingController();
   final TextEditingController _identityController = TextEditingController();
   final TextEditingController _displayNameController = TextEditingController();
+  final TextEditingController _apiKeyController = TextEditingController();
 
   bool loginInProgress = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -51,13 +48,26 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       });
       return;
     }
-    final success = await Session.instance.performLoginForToken(
-      applicationId: _applicationIdController.text,
-      displayName: _displayNameController.text,
-      identity: _identityController.text,
-    );
+    try {
+      await InfobipRTC.instance.registerClient(
+        apiKey: _apiKeyController.text,
+        applicationId: _applicationIdController.text,
+        displayName: _displayNameController.text,
+        identity: _identityController.text,
+      );
+    } on TokenRegistrationError catch (e) {
+      Fluttertoast.showToast(
+        msg: e.message!,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
 
-    if (success) {
+    if (InfobipRTC.instance.isLoggedIn) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => const MainPage()));
     }
 
@@ -97,6 +107,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 controller: _applicationIdController,
                 decoration: const InputDecoration(
                   labelText: 'applicationId',
+                ),
+              ),
+              TextField(
+                controller: _apiKeyController,
+                decoration: const InputDecoration(
+                  labelText: 'API Key',
                 ),
               ),
               const SizedBox(height: 12),

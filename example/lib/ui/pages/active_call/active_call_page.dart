@@ -9,7 +9,6 @@ import 'package:infobip_voice/model/events.dart';
 import 'package:infobip_voice/model/options.dart';
 import 'package:infobip_voice/model/requests.dart';
 import 'package:infobip_voice_showcase/core/model.dart';
-import 'package:infobip_voice_showcase/core/session.dart';
 import 'package:infobip_voice_showcase/ui/widgets/participant_placeholder.dart';
 import 'package:infobip_voice_showcase/ui/widgets/rounded_button.dart';
 
@@ -62,7 +61,6 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
       case CallType.webrtc:
         currentCall = await InfobipRTC.call(
           callRequest: CallRequest(
-            token: Session.instance.token,
             destination: widget.destination!,
             callEventListener: this,
           ),
@@ -72,7 +70,6 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
       case CallType.phone:
         currentCall = await InfobipRTC.callPhoneNumber(
           callRequest: CallRequest(
-            token: Session.instance.token,
             destination: widget.destination!,
             callEventListener: this,
           ),
@@ -83,7 +80,6 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
 
   Future<void> performHangup() async {
     await currentCall?.hangup();
-    Navigator.of(context).pop();
   }
 
   Future<void> toggleMute() async {
@@ -252,7 +248,8 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0);
+      fontSize: 16.0,
+    );
     Navigator.pop(context);
   }
 }
