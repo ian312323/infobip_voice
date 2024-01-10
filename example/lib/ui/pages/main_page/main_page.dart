@@ -2,11 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'tabs/calls_tab.dart';
-import 'tabs/conference_tab.dart';
-import 'tabs/conversations_tab.dart';
 import 'tabs/phone_call_tab.dart';
-import 'tabs/sip_trunk_tab.dart';
 import 'tabs/webrtc_tab.dart';
 
 class MainPage extends StatefulWidget {
@@ -83,24 +79,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 color: Colors.blue,
               ),
               child: Text(
-                'Drawer Header',
+                'Infobip Example',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
                 ),
               ),
-            ),
-            const ListTile(
-              leading: Icon(Icons.info),
-              title: Text('About'),
-            ),
-            const ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-            ),
-            const ListTile(
-              leading: Icon(Icons.sms_failed),
-              title: Text('Feedback'),
             ),
             ListTile(
               leading: const Icon(Icons.power_settings_new),
