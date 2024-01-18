@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 class InfobipRTCVideoView extends StatefulWidget {
   final String streamId;
 
-  const InfobipRTCVideoView(this.streamId, {Key? key}) : super(key: key);
+  const InfobipRTCVideoView(this.streamId, {super.key});
 
   @override
   State<InfobipRTCVideoView> createState() => _InfobipRTCVideoViewState();
