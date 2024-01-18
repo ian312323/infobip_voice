@@ -1,5 +1,7 @@
 package com.infobip.infobip_webrtc_sdk_flutter.util
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.gson.GsonBuilder
 import java.lang.reflect.Modifier
 import java.util.*
@@ -14,6 +16,7 @@ class ObjectSerializer {
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
         .create()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private val serializers: List<Pair<SerializeMatcher, SerializeFunction>> = listOf(
         // if needed, add custom serializers here
         this::isEnum to this::enumToString,
@@ -27,12 +30,13 @@ class ObjectSerializer {
     private fun asIs(obj: Any?): Any? {
         return obj
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun serializeMap(obj: Any?): Any? {
         val map = obj as Map<*, *>
         return map.mapValues { serialize(it.value) }
     }
     private fun enumToString(obj: Any?): String {
-        return (obj as Enum<*>)?.name.uppercase()
+        return (obj as Enum<*>)?.name?.uppercase().toString()
     }
     private fun serializeDate(obj: Any?): String {
         // basically gson.toJson(), but without the quotation marks (gson adds "...")
@@ -55,10 +59,12 @@ class ObjectSerializer {
         return obj.javaClass.canonicalName!!.startsWith("com.infobip")
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun serializeToString(obj: Any?): String? {
         return serialize(obj)?.let { gson.toJson(it) }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun serialize(obj: Any?): Any? {
         if (obj == null) {
             return null;

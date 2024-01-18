@@ -4,8 +4,8 @@ import android.content.Context
 import android.graphics.PixelFormat
 import android.widget.FrameLayout
 import com.infobip.webrtc.sdk.api.InfobipRTC
-import com.infobip.webrtc.sdk.api.video.RTCVideoTrack
-import com.infobip.webrtc.sdk.api.video.VideoRenderer
+import com.infobip.webrtc.sdk.api.model.video.RTCVideoTrack
+import com.infobip.webrtc.sdk.api.model.video.VideoRenderer
 import org.webrtc.RendererCommon
 
 
@@ -25,8 +25,8 @@ class RTCVideoView(context: Context) : FrameLayout(context) {
   }
 
   fun attachTrack(id: String) {
-    val track = getTrack(id)
-    track?.addSink(renderer)
+//    val track = getTrack(id)
+//    track?.addSink(renderer)
   }
 
   fun attachTrack(track: RTCVideoTrack?) {
@@ -37,13 +37,13 @@ class RTCVideoView(context: Context) : FrameLayout(context) {
     renderer.release()
   }
 
-  private fun getTrack(id: String): RTCVideoTrack? {
-    val activeCall = InfobipRTC.getActiveCall() ?: return null
-
-    return when (id) {
-      "local" -> activeCall.localVideoTrack()
-      "remote" -> activeCall.remoteVideoTrack()
-      else -> null
-    }
-  }
+//  private fun getTrack(id: String): RTCVideoTrack? {
+//    val activeCall = InfobipRTC.getInstance().activeCall ?: return null
+//
+//    return when (id) {
+//      "local" -> activeCall.lo
+//      "remote" -> activeCall.remoteVideoTrack()
+//      else -> null
+//    }
+//  }
 }
