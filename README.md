@@ -31,15 +31,16 @@ To get started with Infobip Voice Flutter Plugin, follow these simple steps:
 
 
 ## Features Checklist
+#### Note: Features that are crossed out will not be implemented any time soon, open to contributions
 
 - [x] **Authentication**
 - [x] **Phone Call**
 - [x] **WebRTC Call**
-- [ ] **SIP Trunk**
-- [ ] **Incoming Call**
-- [ ] **Video Call**
-- [ ] **Conversations**
-- [ ] **Push Notification**
+- [x] **Incoming Call**
+- [ ] **~~SIP Trunk~~**
+- [ ] **~~Video Call~~**
+- [ ] **~~Conversations~~**
+- [x] **Push Notification [Only iOS, Android uses active connection]**
 
 ## Updates and Versioning
 
