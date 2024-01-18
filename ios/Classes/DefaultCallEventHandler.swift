@@ -89,7 +89,7 @@ class DefaultWebRTCCallEventListener: WebrtcCallEventListener{
     }
     
     func onRemoteMuted() {
-        
+        plugin.emitEvent(event: "remote_muted", data: nil)
     }
     
     func onRemoteUnmuted() {
@@ -124,3 +124,6 @@ class DefaultWebRTCCallEventListener: WebrtcCallEventListener{
         ))
     }
 }
+
+
+
