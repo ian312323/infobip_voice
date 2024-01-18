@@ -75,6 +75,9 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
           ),
         );
         break;
+      case CallType.incoming:
+        currentCall = await (InfobipRTC.activeCall as IncomingCall).accept(this);
+        break;
     }
   }
 
@@ -242,12 +245,12 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
   @override
   void onHangup(CallHangupEvent callHangupEvent) {
     Fluttertoast.showToast(
-        msg: "onHangup",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
+      msg: "onHangup",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
       fontSize: 16.0,
     );
     Navigator.pop(context);

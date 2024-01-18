@@ -16,6 +16,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final TextEditingController _identityController = TextEditingController();
   final TextEditingController _displayNameController = TextEditingController();
   final TextEditingController _apiKeyController = TextEditingController();
+  final TextEditingController _pushConfigIdController = TextEditingController();
 
   bool loginInProgress = false;
 
@@ -23,6 +24,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void dispose() {
     _applicationIdController.dispose();
     _identityController.dispose();
+    _apiKeyController.dispose();
+    _displayNameController.dispose();
+    _pushConfigIdController.dispose();
     super.dispose();
   }
 
@@ -54,6 +58,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         applicationId: _applicationIdController.text,
         displayName: _displayNameController.text,
         identity: _identityController.text,
+        pushConfigId: _pushConfigIdController.text,
       );
     } on TokenRegistrationError catch (e) {
       Fluttertoast.showToast(
@@ -113,6 +118,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 controller: _apiKeyController,
                 decoration: const InputDecoration(
                   labelText: 'API Key',
+                ),
+              ),
+              TextField(
+                controller: _pushConfigIdController,
+                decoration: const InputDecoration(
+                  labelText: 'Push Config ID',
                 ),
               ),
               const SizedBox(height: 12),

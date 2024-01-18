@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:infobip_voice/api/listeners.dart';
+import 'package:infobip_voice/infobip_rtc.dart';
+import 'package:infobip_voice/model/events.dart';
 import 'package:infobip_voice_showcase/core/model.dart';
 import 'package:infobip_voice_showcase/ui/pages/active_call/active_call_page.dart';
+import 'package:infobip_voice_showcase/ui/pages/active_call/incoming_call_page.dart';
+// import 'package:infobip_voice_showcase/ui/pages/active_call/incoming_call_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PhoneCallTab extends StatefulWidget {
@@ -10,7 +15,7 @@ class PhoneCallTab extends StatefulWidget {
   State<PhoneCallTab> createState() => _PhoneCallTabState();
 }
 
-class _PhoneCallTabState extends State<PhoneCallTab> with TickerProviderStateMixin {
+class _PhoneCallTabState extends State<PhoneCallTab> {
   final TextEditingController _callTargetController = TextEditingController();
 
   @override
@@ -26,6 +31,24 @@ class _PhoneCallTabState extends State<PhoneCallTab> with TickerProviderStateMix
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
+    // InfobipRTC.handleIncomingCalls((p0) {
+    //   MaterialPageRoute(
+    //     builder: (context) => IncomingCallPage(
+    //       incomingCall: p0,
+    //     ),
+    //   );
+    // }, this);
+
+    InfobipRTC.handleIncomingCalls((call) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => IncomingCallPage(
+            incomingCall: call,
+          ),
+        ),
+      );
+    });
 
     setState(() {});
   }
@@ -61,4 +84,5 @@ class _PhoneCallTabState extends State<PhoneCallTab> with TickerProviderStateMix
       ],
     );
   }
+
 }
