@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:infobip_voice/api/listeners.dart';
@@ -159,4 +160,37 @@ class OutgoingCall extends Call {
 
   @override
   Map<String, dynamic> toJson() => _$OutgoingCallToJson(this);
+}
+
+@JsonSerializable()
+class IncomingCall extends Call {
+  IncomingCall(
+    super.id,
+    super.status,
+    super.muted,
+    super.speakerphone,
+    super.duration,
+    super.startTime,
+    super.establishTime,
+    super.endTime,
+    super.source,
+    super.destination,
+  );
+
+  factory IncomingCall.fromJson(Map<String, dynamic> json) => _$IncomingCallFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$IncomingCallToJson(this);
+
+  /// Accept the incoming call.
+  Future<IncomingCall> accept(CallEventListener listener) async {
+    callEventListener = listener;
+    Call._channel.invokeMethod('accept', {});
+    return this;
+  }
+
+  /// Reject the incoming call.
+  Future<void> reject() async {
+    return Call._channel.invokeMethod('decline', {});
+  }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,7 @@ class InfobipRTC {
   static InfobipRTC get instance => _infobipRTC ??= InfobipRTC._internal();
 
   final MethodChannel _channel = const MethodChannel('infobip_webrtc_sdk_flutter');
+  final MethodChannel _incomingChannel = const MethodChannel('infobip_webrtc_sdk_flutter_incoming_call');
 
   static const String _apiBaseUrl = "https://api.infobip.com";
 
@@ -41,12 +43,19 @@ class InfobipRTC {
 
   /* SDK Public API */
 
-  // Login
+  // * [registerClient] registers the client to the Infobip WebRTC platform.
+  // * [apiKey] is the API key of the application.
+  // * [identity] is the identity of the user.
+  // * [applicationId] is the ID of the application.
+  // * [displayName] is the display name of the user.
+  // pushConfigId is the ID of the push configuration. Only iOS
+  // Android uses active connection for calls, so push configuration is not needed.
   Future<void> registerClient({
     required String apiKey,
     required String identity,
     required String applicationId,
     required String displayName,
+    String? pushConfigId,
   }) async {
     try {
       final response = await _dio.post('/webrtc/1/token',
@@ -65,6 +74,14 @@ class InfobipRTC {
         throw TokenRegistrationError(message: '${response.statusCode}:${response.statusMessage}');
       }
       _token = response.data['token'];
+
+      await instance._channel.invokeMethod('setToken', {
+        "token": _token,
+        "pushConfigId": pushConfigId,
+      });
+      if (Platform.isAndroid) {
+        await instance._channel.invokeMethod('handleIncomingCalls');
+      }
     } catch (e) {
       throw TokenRegistrationError(message: e.toString());
     }
@@ -81,11 +98,8 @@ class InfobipRTC {
     if (_token == null) throw const NoTokenError();
     if (callRequest.destination.isEmpty) throw const NoDestinationError();
 
-    String res = await instance._channel.invokeMethod('call', {
-      "token": _token,
-      "destination": callRequest.destination,
-      "options": options != null ? jsonEncode(options.toJson()) : null
-    });
+    String res = await instance._channel.invokeMethod('call',
+        {"destination": callRequest.destination, "options": options != null ? jsonEncode(options.toJson()) : null});
 
     _activeCall = OutgoingCall.fromJson(jsonDecode(res));
     activeCall?.callEventListener = callRequest.callEventListener;
@@ -100,7 +114,6 @@ class InfobipRTC {
     if (_token == null) throw const NoTokenError();
 
     String jsonStr = await instance._channel.invokeMethod('callConversations', {
-      "token": _token,
       "options": options != null ? jsonEncode(options.toJson()) : null,
     });
 
@@ -117,12 +130,28 @@ class InfobipRTC {
     if (callRequest.destination.isEmpty) throw const NoDestinationError();
 
     String jsonStr = await instance._channel.invokeMethod('callPhoneNumber', {
-      "token": _token,
       "destination": callRequest.destination,
     });
 
     _activeCall = OutgoingCall.fromJson(jsonDecode(jsonStr));
     activeCall?.callEventListener = callRequest.callEventListener;
     return activeCall as OutgoingCall;
+  }
+
+  static Future<void> handleIncomingCalls(Function(IncomingCall) onCall) async {
+    instance._incomingChannel.setMethodCallHandler((call) async {
+      if (call.method == 'onEvent') {
+        final event = call.arguments['event'];
+        switch (event) {
+          case "onIncomingCall":
+            final callData = jsonDecode(call.arguments['data'].toString()) as Map<String, dynamic>;
+            _activeCall = IncomingCall.fromJson(callData);
+            onCall.call(_activeCall as IncomingCall);
+            break;
+          default:
+            throw Exception("Unknown call event! ${call.method}");
+        }
+      }
+    });
   }
 }

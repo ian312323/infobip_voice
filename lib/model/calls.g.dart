@@ -49,6 +49,7 @@ Map<String, dynamic> _$CallToJson(Call instance) => <String, dynamic>{
     };
 
 const _$CallStatusEnumMap = {
+  CallStatus.initialized: 'INITIALIZED',
   CallStatus.initializing: 'INITIALIZING',
   CallStatus.calling: 'CALLING',
   CallStatus.ringing: 'RINGING',
@@ -76,6 +77,37 @@ OutgoingCall _$OutgoingCallFromJson(Map<String, dynamic> json) => OutgoingCall(
     );
 
 Map<String, dynamic> _$OutgoingCallToJson(OutgoingCall instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'status': _$CallStatusEnumMap[instance.status]!,
+      'muted': instance.muted,
+      'speakerphone': instance.speakerphone,
+      'duration': instance.duration,
+      'startTime': instance.startTime?.toIso8601String(),
+      'establishTime': instance.establishTime?.toIso8601String(),
+      'endTime': instance.endTime?.toIso8601String(),
+      'source': instance.source,
+      'destination': instance.destination,
+    };
+
+IncomingCall _$IncomingCallFromJson(Map<String, dynamic> json) => IncomingCall(
+      json['id'] as String,
+      $enumDecode(_$CallStatusEnumMap, json['status']),
+      json['muted'] as bool,
+      json['speakerphone'] as bool,
+      json['duration'] as int,
+      customDateTimeFromString(json['startTime'] as String),
+      json['establishTime'] == null
+          ? null
+          : DateTime.parse(json['establishTime'] as String),
+      json['endTime'] == null
+          ? null
+          : DateTime.parse(json['endTime'] as String),
+      User.fromJson(json['source'] as Map<String, dynamic>),
+      User.fromJson(json['destination'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$IncomingCallToJson(IncomingCall instance) =>
     <String, dynamic>{
       'id': instance.id,
       'status': _$CallStatusEnumMap[instance.status]!,

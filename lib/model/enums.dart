@@ -8,6 +8,8 @@ enum CameraOrientation {
 }
 
 enum CallStatus {
+  @JsonValue("INITIALIZED")
+  initialized,
   @JsonValue("INITIALIZING")
   initializing,
   @JsonValue("CALLING")
