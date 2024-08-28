@@ -15,7 +15,7 @@ To get started with Infobip Voice Flutter Plugin, follow these simple steps:
 
     ```yaml
     dependencies:
-      infobip_voice: ^0.0.2
+      infobip_voice: latest
     ```
 
 2. **Import:** Import the package in your Dart code.
@@ -26,9 +26,24 @@ To get started with Infobip Voice Flutter Plugin, follow these simple steps:
 
 3. **Usage:** Integrate Infobip Voice into your application and start utilizing real-time communication features.
     ```dart
-   coming soon
-    ```
+    // Initialize and register the client
+    await InfobipRTC.registerClient(
+      apiKey: 'YOUR_API_KEY',
+      identity: 'USER_IDENTITY',
+      applicationId: 'YOUR_APPLICATION_ID',
+      displayName: 'USER_DISPLAY_NAME',
+      pushConfigId: 'YOUR_PUSH_CONFIG_ID', // Optional, for iOS push notifications
+    );
 
+    // Check if the client is logged in
+    bool isLoggedIn = InfobipRTC.instance.isLoggedIn;
+
+    // Get the token if logged in
+    String? token = InfobipRTC.instance.token;
+
+    // Unregister the client when done
+    await InfobipRTC.instance.unregisterClient();
+    ```
 
 ## Features Checklist
 #### Note: Features that are crossed out will not be implemented any time soon, open to contributions
