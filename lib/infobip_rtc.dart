@@ -13,33 +13,29 @@ import 'model/requests.dart';
 class InfobipRTC {
   static InfobipRTC? _infobipRTC;
 
-  static InfobipRTC get instance => _infobipRTC ??= InfobipRTC._internal();
-
-  final MethodChannel _channel = const MethodChannel('infobip_webrtc_sdk_flutter');
-  final MethodChannel _incomingChannel = const MethodChannel('infobip_webrtc_sdk_flutter_incoming_call');
-
   static const String _apiBaseUrl = "https://api.infobip.com";
-
-  late final Dio _dio = Dio()..options.baseUrl = _apiBaseUrl;
 
   /// A reference to the ongoing call.
   static Call? _activeCall;
-
   static String? _token;
 
-  String? get token => _token;
-
-  bool get isLoggedIn => _token != null;
-
   static Call? get activeCall => _activeCall;
+
+  static InfobipRTC get instance => _infobipRTC ??= InfobipRTC._internal();
+
+  final MethodChannel _channel = const MethodChannel('infobip_webrtc_sdk_flutter');
+
+  final MethodChannel _incomingChannel = const MethodChannel('infobip_webrtc_sdk_flutter_incoming_call');
+
+  late final Dio _dio = Dio()..options.baseUrl = _apiBaseUrl;
 
   InfobipRTC._internal() {
     _channel.setMethodCallHandler(_onMethodCall);
   }
 
-  Future<void> _onMethodCall(MethodCall call) {
-    throw Exception("No method on RTC SDK ${call.method}");
-  }
+  bool get isLoggedIn => _token != null;
+
+  String? get token => _token;
 
   /* SDK Public API */
 
@@ -89,6 +85,10 @@ class InfobipRTC {
 
   Future<void> unregisterClient() async {
     _token = null;
+  }
+
+  Future<void> _onMethodCall(MethodCall call) {
+    throw Exception("No method on RTC SDK ${call.method}");
   }
 
   /// Makes an outgoing call specified by [callRequest] to another user of Infobip's WebRTC platform.
