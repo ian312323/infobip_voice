@@ -24,7 +24,7 @@ class RoundedButton extends StatelessWidget {
       width: getProportionateScreenWidth(size),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            primary: color,
+            foregroundColor: color,
             padding: EdgeInsets.all(15 / 64 * size),
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(100)),

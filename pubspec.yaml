@@ -1,7 +1,7 @@
 name: infobip_voice
-description: Infobip voice is a Flutter plugin which enables you to take advantage of Infobip platform, giving you the ability to enrich yCour apps with real-time communications in minimum time.
+description: Infobip voice is a Flutter plugin which enables you to take advantage of Infobip platform, giving you the ability to enrich your apps with real-time communications in minimum time.
 repository: https://github.com/icodelifee/infobip_voice
-version: 0.0.1
+version: 0.0.3
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
