@@ -156,11 +156,15 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
     /* SDK API */
     public func call(_ methodCall: FlutterMethodCall, result: @escaping FlutterResult) throws {
         let args = methodCall.arguments as! [String: Any]
-        let token: String = args["token"] as! String
         let destination: String = args["destination"] as! String
+        if(token == nil){
+            result(FlutterError(code: "UNAUTHENTICATED", message: "Token not set", details: nil))
+            return
+        }
         
-        let callWebrtcRequest  = CallWebrtcRequest(token, destination: destination, webrtcCallEventListener: DefaultWebRTCCallEventListener(plugin: self)
+        let callWebrtcRequest  = CallWebrtcRequest(token!, destination: destination, webrtcCallEventListener: DefaultWebRTCCallEventListener(plugin: self)
         )
+        
         do{
             let webrtcCall = try infobipRTC.callWebrtc(callWebrtcRequest)
             let json = webrtcCall.toFlutterModel().toJsonString()
@@ -175,7 +179,7 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
     public func callPhoneNumber(_ methodCall: FlutterMethodCall, result: @escaping FlutterResult) throws {
         let args = methodCall.arguments as! [String: Any]
         if(token == nil){
-            result(FlutterError(code: "CALL_ERROR", message: "Token not set", details: nil))
+            result(FlutterError(code: "UNAUTHENTICATED", message: "Token not set", details: nil))
             return
         }
         
