@@ -16,7 +16,7 @@ Infobip SDK Flutter
 
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'InfobipRTC', '2.2.12'
+  s.dependency 'InfobipRTC', '2.4.0'
   s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice.
