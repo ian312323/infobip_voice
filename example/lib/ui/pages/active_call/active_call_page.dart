@@ -15,16 +15,16 @@ import 'package:infobip_voice_showcase/ui/widgets/rounded_button.dart';
 import '../../size_config.dart';
 
 class ActiveCallPage extends StatefulWidget {
+  final CallType callType;
+
+  final String? destination;
+  final CallOptions? options;
   const ActiveCallPage(
     this.callType,
     this.destination,
     this.options, {
     Key? key,
   }) : super(key: key);
-
-  final CallType callType;
-  final String? destination;
-  final CallOptions? options;
 
   @override
   State<ActiveCallPage> createState() => _ActiveCallPageState();
@@ -37,74 +37,6 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
 
   bool callEstablished = false;
   Call? currentCall;
-
-  @override
-  void initState() {
-    super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {});
-
-    initiateCall();
-  }
-
-  void initiateCall() async {
-    switch (widget.callType) {
-      case CallType.webrtc:
-        currentCall = await InfobipRTC.call(
-          callRequest: CallRequest(
-            destination: widget.destination!,
-            callEventListener: this,
-          ),
-          options: widget.options,
-        );
-        break;
-      case CallType.phone:
-        currentCall = await InfobipRTC.callPhoneNumber(
-          callRequest: CallRequest(
-            destination: widget.destination!,
-            callEventListener: this,
-          ),
-        );
-        break;
-      case CallType.incoming:
-        currentCall = await (InfobipRTC.activeCall as IncomingCall).accept(this);
-        break;
-    }
-  }
-
-  Future<void> performHangup() async {
-    await currentCall?.hangup();
-  }
-
-  Future<void> toggleMute() async {
-    setState(() {
-      muted = !muted;
-      currentCall?.mute(muted);
-    });
-  }
-
-  Future<void> toggleVideo() async {
-    setState(() {
-      video = !video;
-      currentCall?.localVideo(video);
-    });
-  }
-
-  Future<void> toggleSpeaker() async {
-    setState(() {
-      speaker = !speaker;
-      currentCall?.setSpeakerphone(speaker);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,6 +108,49 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
     );
   }
 
+  void initiateCall() async {
+    switch (widget.callType) {
+      case CallType.webrtc:
+        currentCall = await InfobipRTC.call(
+          callRequest: CallRequest(
+            destination: widget.destination!,
+            callEventListener: this,
+          ),
+          options: widget.options,
+        );
+        break;
+      case CallType.phone:
+        currentCall = await InfobipRTC.callPhoneNumber(
+          callRequest: CallRequest(
+            destination: widget.destination!,
+            callEventListener: this,
+          ),
+        );
+        break;
+      case CallType.incoming:
+        currentCall = await (InfobipRTC.activeCall as IncomingCall).accept(this);
+        break;
+    }
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {});
+
+    initiateCall();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
+
   @override
   void onEarlyMedia() {
     Fluttertoast.showToast(
@@ -217,6 +192,20 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
   }
 
   @override
+  void onHangup(CallHangupEvent callHangupEvent) {
+    Fluttertoast.showToast(
+      msg: "onHangup",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+    Navigator.pop(context);
+  }
+
+  @override
   void onRinging() {
     Fluttertoast.showToast(
         msg: "onRinging",
@@ -242,17 +231,28 @@ class _ActiveCallPageState extends State<ActiveCallPage> with TickerProviderStat
     setState(() {});
   }
 
-  @override
-  void onHangup(CallHangupEvent callHangupEvent) {
-    Fluttertoast.showToast(
-      msg: "onHangup",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
-    Navigator.pop(context);
+  Future<void> performHangup() async {
+    await currentCall?.hangup();
+  }
+
+  Future<void> toggleMute() async {
+    setState(() {
+      muted = !muted;
+      currentCall?.mute(muted);
+    });
+  }
+
+  Future<void> toggleSpeaker() async {
+    setState(() {
+      speaker = !speaker;
+      currentCall?.setSpeakerphone(speaker);
+    });
+  }
+
+  Future<void> toggleVideo() async {
+    setState(() {
+      video = !video;
+      currentCall?.localVideo(video);
+    });
   }
 }

@@ -21,67 +21,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool loginInProgress = false;
 
   @override
-  void dispose() {
-    _applicationIdController.dispose();
-    _identityController.dispose();
-    _apiKeyController.dispose();
-    _displayNameController.dispose();
-    _pushConfigIdController.dispose();
-    super.dispose();
-  }
-
-  void performLogin() async {
-    if (loginInProgress) {
-      return;
-    }
-    setState(() {
-      loginInProgress = true;
-    });
-    if (_applicationIdController.text.isEmpty || _identityController.text.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Please fill the fields to login",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      setState(() {
-        loginInProgress = false;
-      });
-      return;
-    }
-    try {
-      await InfobipRTC.instance.registerClient(
-        apiKey: _apiKeyController.text,
-        applicationId: _applicationIdController.text,
-        displayName: _displayNameController.text,
-        identity: _identityController.text,
-        pushConfigId: _pushConfigIdController.text,
-      );
-    } on TokenRegistrationError catch (e) {
-      Fluttertoast.showToast(
-        msg: e.message!,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
-
-    if (InfobipRTC.instance.isLoggedIn) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const MainPage()));
-    }
-
-    setState(() {
-      loginInProgress = false;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Infobip WebRTC')),
@@ -140,5 +79,66 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _applicationIdController.dispose();
+    _identityController.dispose();
+    _apiKeyController.dispose();
+    _displayNameController.dispose();
+    _pushConfigIdController.dispose();
+    super.dispose();
+  }
+
+  Future<void> performLogin() async {
+    if (loginInProgress) {
+      return;
+    }
+    setState(() {
+      loginInProgress = true;
+    });
+    if (_applicationIdController.text.isEmpty || _identityController.text.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Please fill the fields to login",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      setState(() {
+        loginInProgress = false;
+      });
+      return;
+    }
+    try {
+      await InfobipRTC.instance.registerClient(
+        apiKey: _apiKeyController.text,
+        applicationId: _applicationIdController.text,
+        displayName: _displayNameController.text,
+        identity: _identityController.text,
+        pushConfigId: _pushConfigIdController.text,
+      );
+    } on TokenRegistrationError catch (e) {
+      Fluttertoast.showToast(
+        msg: e.message!,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+
+    if (InfobipRTC.instance.isLoggedIn) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const MainPage()));
+    }
+
+    setState(() {
+      loginInProgress = false;
+    });
   }
 }
