@@ -83,6 +83,19 @@ class InfobipRTC {
     }
   }
 
+  // Only use if you are handling your own token
+  Future<void> setToken(String token, {String? pushConfigId}) async {
+    _token = token;
+
+    await instance._channel.invokeMethod('setToken', {
+      "token": _token,
+      "pushConfigId": pushConfigId,
+    });
+    if (Platform.isAndroid) {
+      await instance._channel.invokeMethod('handleIncomingCalls');
+    }
+  }
+
   Future<void> unregisterClient() async {
     _token = null;
   }
