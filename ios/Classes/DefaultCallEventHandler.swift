@@ -45,7 +45,7 @@ class DefaultCallEventHandler : PhoneCallEventListener {
 }
 
 
-class DefaultWebRTCCallEventListener: WebrtcCallEventListener{
+class RTCWebRTCCallEventListener: WebrtcCallEventListener {
     let plugin: InfobipPlugin
     
     init(plugin: InfobipPlugin) {

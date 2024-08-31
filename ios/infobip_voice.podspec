@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'infobip_voice'
-  s.version          = '0.0.5'
+  s.version          = '0.0.3'
   s.summary          = 'Infobip SDK Flutter'
   s.description      = <<-DESC
 Infobip SDK Flutter

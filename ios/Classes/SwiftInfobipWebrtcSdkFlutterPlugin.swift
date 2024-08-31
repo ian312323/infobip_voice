@@ -28,7 +28,7 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
     let channel: FlutterMethodChannel
     let callEventChannel: FlutterMethodChannel
     let incomingCallMethodChannel: FlutterMethodChannel
-
+    
     var mapping: [String: Handler] = [:]
     
     var token: String? = nil
@@ -132,7 +132,7 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
     
     public func onIncomingWebrtcCall(_ incomingWebrtcCallEvent: IncomingWebrtcCallEvent) {
         let incomingWebrtcCall = incomingWebrtcCallEvent.incomingWebrtcCall
-        incomingWebrtcCall.webrtcCallEventListener = DefaultWebRTCCallEventListener(plugin: self)
+        incomingWebrtcCall.webrtcCallEventListener = RTCWebRTCCallEventListener(plugin: self)
         let json = incomingWebrtcCall.toFlutterModel().toJsonString()
         incomingCallMethodChannel.invokeMethod("onEvent", arguments: [
             "event": "onIncomingCall",
@@ -162,7 +162,9 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
             return
         }
         
-        let callWebrtcRequest  = CallWebrtcRequest(token!, destination: destination, webrtcCallEventListener: DefaultWebRTCCallEventListener(plugin: self)
+        let callWebrtcRequest  = CallWebrtcRequest(token!,
+                                                   destination: destination,
+                                                   webrtcCallEventListener: RTCWebRTCCallEventListener(plugin: self)
         )
         
         do{
