@@ -10,6 +10,8 @@ import 'model/calls.dart';
 import 'model/options.dart';
 import 'model/requests.dart';
 
+export 'api/listeners.dart';
+
 class InfobipRTC {
   static InfobipRTC? _infobipRTC;
 
