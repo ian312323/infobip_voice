@@ -52,6 +52,10 @@ class RTCWebRTCCallEventListener: WebrtcCallEventListener {
         self.plugin = plugin
     }
     
+    func onCallRecordingStarted(_ callRecordingStartedEvent: CallRecordingStartedEvent) {
+        plugin.emitEvent(event: "call_recording_started", data: nil)
+    }
+    
     func onCameraVideoAdded(_ cameraVideoAddedEvent: CameraVideoAddedEvent) {
         
     }
