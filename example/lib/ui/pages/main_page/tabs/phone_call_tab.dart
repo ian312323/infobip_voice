@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:infobip_voice/api/listeners.dart';
 import 'package:infobip_voice/infobip_rtc.dart';
-import 'package:infobip_voice/model/events.dart';
 import 'package:infobip_voice_showcase/core/model.dart';
 import 'package:infobip_voice_showcase/ui/pages/active_call/active_call_page.dart';
 import 'package:infobip_voice_showcase/ui/pages/active_call/incoming_call_page.dart';

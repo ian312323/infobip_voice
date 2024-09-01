@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:infobip_voice/api/listeners.dart';
 import 'package:infobip_voice/infobip_rtc.dart';
 import 'package:infobip_voice/model/calls.dart';
 import 'package:infobip_voice/model/events.dart';
