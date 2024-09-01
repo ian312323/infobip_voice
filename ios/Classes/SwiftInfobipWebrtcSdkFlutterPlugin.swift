@@ -144,10 +144,14 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
     public func setToken(_ methodCall: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = methodCall.arguments as! [String: Any]
         let newToken: String = args["token"] as! String
-        let newpushConfigId: String = args["pushConfigId"] as! String
+        let newPushConfigId: String? = args["pushConfigId"] as? String
+        
         token = newToken
-        pushConfigId = newpushConfigId
-        createPushRegistry()
+        
+        if let configId: String = newPushConfigId {
+            pushConfigId = configId
+            createPushRegistry()
+        }
         os_log("Token set")
         result(nil)
     }
@@ -162,11 +166,11 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
             return
         }
         
-        let callWebrtcRequest  = CallWebrtcRequest(token!,
-                                                   destination: destination,
-                                                   webrtcCallEventListener: RTCWebRTCCallEventListener(plugin: self)
+        let callWebrtcRequest = CallWebrtcRequest(
+            token!,
+            destination: destination,
+            webrtcCallEventListener: RTCWebRTCCallEventListener(plugin: self)
         )
-        
         do{
             let webrtcCall = try infobipRTC.callWebrtc(callWebrtcRequest)
             let json = webrtcCall.toFlutterModel().toJsonString()
