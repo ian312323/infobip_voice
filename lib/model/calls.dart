@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:flutter/services.dart';
 import 'package:infobip_voice/api/listeners.dart';
 import 'package:infobip_voice/model/events.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'dart:developer' as developer;
 
 import 'enums.dart';
 
@@ -116,6 +116,11 @@ class Call {
   Future<void> mute(bool mute) async {
     await _channel.invokeMethod('mute', {"mute": mute});
     muted = mute;
+  }
+
+  /// Send DTMF to the call.
+  Future<void> sendDTMF(String digits) async {
+    await _channel.invokeMethod('dmtf', {"dmtf": digits});
   }
 
   /// Set whether speakerphone is [enabled].
