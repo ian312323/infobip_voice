@@ -131,6 +131,7 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
     
     
     public func onIncomingWebrtcCall(_ incomingWebrtcCallEvent: IncomingWebrtcCallEvent) {
+        os_log("Recieved Incoming Call Event")
         let incomingWebrtcCall = incomingWebrtcCallEvent.incomingWebrtcCall
         incomingWebrtcCall.webrtcCallEventListener = RTCWebRTCCallEventListener(plugin: self)
         let json = incomingWebrtcCall.toFlutterModel().toJsonString()
@@ -140,6 +141,12 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
         ])
     }
     
+    func createPushRegistry() {
+        os_log("Creating push registry")
+        voipRegistry = isSimulator() ? InfobipSimulator(token: token!) : PKPushRegistry(queue: DispatchQueue.main)
+        voipRegistry?.desiredPushTypes = [PKPushType.voIP]
+        voipRegistry?.delegate = self
+    }
     
     public func setToken(_ methodCall: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = methodCall.arguments as! [String: Any]
@@ -257,15 +264,11 @@ public class SwiftInfobipWebrtcSdkFlutterPlugin: NSObject, FlutterPlugin, Infobi
     }
     
     
-    func createPushRegistry() {
-        os_log("Creating push registry")
-        voipRegistry = isSimulator() ? InfobipSimulator(token: token!) : PKPushRegistry(queue: DispatchQueue.main)
-        voipRegistry?.desiredPushTypes = [PKPushType.voIP]
-        voipRegistry?.delegate = self
-    }
+
     
     public func handleIncomingCall(_ methodCall: FlutterMethodCall, result: @escaping FlutterResult) {
         
+
     }
     
     public func accept(_ methodCall: FlutterMethodCall, result: @escaping FlutterResult) {
