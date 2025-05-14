@@ -118,8 +118,13 @@ class InfobipWebrtcSdkFlutterPlugin : FlutterPlugin, ActivityAware, MethodCallHa
             try {
                 result.success(method.invoke(this, methodCall))
             } catch (ex: Throwable) {
-                // TODO better error handling
-                result.error("ERROR", ex.message, ex);
+                val cause = ex.cause ?: ex
+                Log.e("WebRTC", "Error invoking method ${method.name}", cause)
+                result.error(
+                    "ERROR",
+                    "Error in ${method.name}: ${cause.message}",
+                    cause.stackTraceToString()
+                )
             }
         }
     }
@@ -266,27 +271,42 @@ class InfobipWebrtcSdkFlutterPlugin : FlutterPlugin, ActivityAware, MethodCallHa
     @RequiresApi(Build.VERSION_CODES.O)
     @FlutterApi
     fun handleIncomingCalls(methodCall: MethodCall) {
-        infobipRTC.registerForActiveConnection(
-            token, applicationContext,
-            IncomingCallEventListener { incomingWebrtcCallEvent ->
-                val incomingWebrtcCall = incomingWebrtcCallEvent.incomingWebrtcCall
-                Log.d(
-                    "WebRTC",
-                    "Received incoming call from:  " + incomingWebrtcCall.source()
-                        .identifier() + " " + incomingWebrtcCall.source().displayIdentifier()
-                )
-                incomingWebrtcCall.eventListener = DefaultWebRTCCallEventListener(this)
-                incomingCall  = incomingWebrtcCall
-                activity?.runOnUiThread {
-                    val map =
-                        mapOf(
-                            "event" to "onIncomingCall",
-                            "data" to incomingWebrtcCall.let { serializer.serializeToString(it)!! },
-                        )
-                    incomingCallEventChannel.invokeMethod("onEvent", map)
-                }
-            },
-        )
+        if (token == null) {
+            Log.e("WebRTC", "Token is null. Please set token before handling incoming calls.")
+            return
+        }
+        
+        if (applicationContext == null) {
+            Log.e("WebRTC", "Application context is null")
+            return
+        }
+
+        try {
+            infobipRTC.registerForActiveConnection(
+                token, applicationContext,
+                IncomingCallEventListener { incomingWebrtcCallEvent ->
+                    val incomingWebrtcCall = incomingWebrtcCallEvent.incomingWebrtcCall
+                    Log.d(
+                        "WebRTC",
+                        "Received incoming call from:  " + incomingWebrtcCall.source()
+                            .identifier() + " " + incomingWebrtcCall.source().displayIdentifier()
+                    )
+                    incomingWebrtcCall.eventListener = DefaultWebRTCCallEventListener(this)
+                    incomingCall  = incomingWebrtcCall
+                    activity?.runOnUiThread {
+                        val map =
+                            mapOf(
+                                "event" to "onIncomingCall",
+                                "data" to incomingWebrtcCall.let { serializer.serializeToString(it)!! },
+                            )
+                        incomingCallEventChannel.invokeMethod("onEvent", map)
+                    }
+                },
+            )
+        } catch (e: Exception) {
+            Log.e("WebRTC", "Error registering for active connection", e)
+            throw e
+        }
     }
 
     @FlutterApi
