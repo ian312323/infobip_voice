@@ -90,6 +90,9 @@ class InfobipWebrtcSdkFlutterPlugin : FlutterPlugin, ActivityAware, MethodCallHa
             RTCVideoViewFactory(this)
         )
 
+        // Store the application context
+        contextReference = WeakReference(flutterPluginBinding.applicationContext)
+
         InfobipWebrtcSdkFlutterPlugin::class.java.methods.filter { e ->
             e.isAnnotationPresent(
                 FlutterApi::class.java
@@ -129,6 +132,13 @@ class InfobipWebrtcSdkFlutterPlugin : FlutterPlugin, ActivityAware, MethodCallHa
         }
     }
 
+    private fun validateContext(): Boolean {
+        if (applicationContext == null) {
+            Log.e("WebRTC", "Application context is null. Plugin may not be properly initialized.")
+            return false
+        }
+        return true
+    }
 
     override fun setView(streamId: String, rtcVideoView: RTCVideoView) {
         views[streamId] = rtcVideoView
@@ -163,10 +173,26 @@ class InfobipWebrtcSdkFlutterPlugin : FlutterPlugin, ActivityAware, MethodCallHa
 
     @FlutterApi
     fun setToken(methodCall: MethodCall): String {
-        val newToken: String = methodCall.argument("token")!!
-        val newPushId: String = methodCall.argument("pushConfigId")!!
+        if (!validateContext()) {
+            throw IllegalStateException("Application context is not available. Plugin may not be properly initialized.")
+        }
+
+        val newToken = methodCall.argument<String>("token")
+        val newPushId = methodCall.argument<String>("pushConfigId")
+        
+        if (newToken == null) {
+            Log.e("WebRTC", "Token argument is missing")
+            throw IllegalArgumentException("Token argument is required")
+        }
+        
+        if (newPushId == null) {
+            Log.e("WebRTC", "PushConfigId argument is missing")
+            throw IllegalArgumentException("PushConfigId argument is required")
+        }
+        
         token = newToken
         pushId = newPushId
+        Log.d("WebRTC", "Token and PushConfigId set successfully")
         return ""
     }
 
@@ -271,19 +297,18 @@ class InfobipWebrtcSdkFlutterPlugin : FlutterPlugin, ActivityAware, MethodCallHa
     @RequiresApi(Build.VERSION_CODES.O)
     @FlutterApi
     fun handleIncomingCalls(methodCall: MethodCall) {
+        if (!validateContext()) {
+            throw IllegalStateException("Application context is not available. Plugin may not be properly initialized.")
+        }
+
         if (token == null) {
             Log.e("WebRTC", "Token is null. Please set token before handling incoming calls.")
-            return
-        }
-        
-        if (applicationContext == null) {
-            Log.e("WebRTC", "Application context is null")
             return
         }
 
         try {
             infobipRTC.registerForActiveConnection(
-                token, applicationContext,
+                token!!, applicationContext!!,
                 IncomingCallEventListener { incomingWebrtcCallEvent ->
                     val incomingWebrtcCall = incomingWebrtcCallEvent.incomingWebrtcCall
                     Log.d(
