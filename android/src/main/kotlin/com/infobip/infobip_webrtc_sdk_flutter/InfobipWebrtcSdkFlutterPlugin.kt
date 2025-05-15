@@ -185,11 +185,7 @@ class InfobipWebrtcSdkFlutterPlugin : FlutterPlugin, ActivityAware, MethodCallHa
             throw IllegalArgumentException("Token argument is required")
         }
         
-        if (newPushId == null) {
-            Log.e("WebRTC", "PushConfigId argument is missing")
-            throw IllegalArgumentException("PushConfigId argument is required")
-        }
-        
+    
         token = newToken
         pushId = newPushId
         Log.d("WebRTC", "Token and PushConfigId set successfully")
